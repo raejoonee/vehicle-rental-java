@@ -1,7 +1,7 @@
 package vehicle_rental;
 
-public class Customer {
-	private String id;
+public class Customer extends Member {
+	String id;
 	private int balance;
 	private int mileage;
 	
