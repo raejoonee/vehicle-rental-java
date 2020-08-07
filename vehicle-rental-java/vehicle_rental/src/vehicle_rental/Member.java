@@ -48,7 +48,7 @@ public class Member {
 
 	@Override
 	public String toString() {
-		return "Member [id=" + id + ", pw=" + pw + ", age=" + age + ", login=" + login + "]";
+		return " [id=" + id + ", age=" + age + ", login=" + login + "]";
 	}
 	
 	

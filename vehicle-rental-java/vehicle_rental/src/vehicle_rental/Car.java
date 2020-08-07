@@ -1,19 +1,21 @@
 package vehicle_rental;
 
+import java.util.Date;
+
 public class Car {
-	private String numberPlate;
-	private int initialFee;
-	private int additionalFee;
+	protected String numberPlate;
+	protected int initialFee; // 처음 대여 가격 
+	protected int additionalFee; // 1분마다 붙는 가격 
+	protected double discountRatio;
+	protected Date registeredDate;
 	
 	public Car() {
 		
 	}
-
-	public Car(String numberPlate, int initialFee, int additionalFee) {
-		super();
+	
+	public Car(String numberPlate) {
 		this.numberPlate = numberPlate;
-		this.initialFee = initialFee;
-		this.additionalFee = additionalFee;
+		
 	}
 
 	public String getNumberPlate() {
@@ -39,12 +41,21 @@ public class Car {
 	public void setAdditionalFee(int additionalFee) {
 		this.additionalFee = additionalFee;
 	}
+	public double getDiscountRatio() {
+		return discountRatio;
+	}
+
+	public void setDiscountRatio(double discountRatio) {
+		this.discountRatio = discountRatio;
+	}
 
 	@Override
 	public String toString() {
 		return "Car [numberPlate=" + numberPlate + ", initialFee=" + initialFee + ", additionalFee=" + additionalFee
-				+ "]";
+				+ ", discountRatio=" + discountRatio + "]";
 	}
+
+	
 	
 	
 	
