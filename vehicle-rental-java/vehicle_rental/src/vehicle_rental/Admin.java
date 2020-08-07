@@ -10,10 +10,6 @@ public class Admin extends Member {
 		this.age = age;
 	}
 	
-	public void registerCar(Car car) {
-		CarManager.cm.add(car);
-	}
-	
 	public void showMember() {
 		Iterator<Member> iter = MemberService.mb.iterator();
 		int cnt = 1;
@@ -23,11 +19,6 @@ public class Admin extends Member {
 		}
 	}
 	
-//	public void deleteCar(Car car) {
-//		Iterator<>
-//		
-//		
-//	}
 	
 	public static void main(String[] args) {
 		MemberService mb = new MemberService();

@@ -1,7 +1,7 @@
 package vehicle_rental;
 
-import java.util.HashSet;
-import java.util.Iterator;
+import java.io.*;
+import java.util.*;
 
 public class CarManager {
 	
@@ -13,12 +13,20 @@ public class CarManager {
 	
 	public static HashSet<Car> cm = new HashSet<>(); // 빌릴수 있는 차량들
 	
-	public void showList() {
-		Iterator<Car> iterator = cm.iterator();
-		int count = 1;
-		while(iterator.hasNext()) {
-			System.out.printf("%03d ", count++);
-			System.out.println(iterator.next().toString());
+	public void showList() throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(new File(RentalSystem.carListPath)));
+		br.readLine();
+		String line = "";
+		int i = 1;
+		while (true){
+			if(line != null){
+				line = br.readLine();
+				if(line == null) break;
+				System.out.printf("%03d: %s\n", i, line);
+				i++;
+			}else{
+				break;
+			}
 		}
 	}
 	
