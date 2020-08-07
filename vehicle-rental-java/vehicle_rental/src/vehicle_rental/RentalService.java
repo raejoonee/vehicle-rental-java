@@ -1,6 +1,6 @@
 package vehicle_rental;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.Scanner;
 
 public class RentalService {
@@ -10,7 +10,6 @@ public class RentalService {
 		RentalSystem rs = RentalSystem.getInstance();
 		
 		Scanner sc = new Scanner(System.in);
-		// Scanner 닫기 
 		
 		int age = 0;
 		String id = null;
@@ -26,8 +25,6 @@ public class RentalService {
 
 		System.out.println("--------------------------------");
 		System.out.println("자동차 렌탈 서비스에 오신 것을 환영합니다.");
-		
-		
 		
 		while(test){
 			Loop1 : while (!login){
@@ -76,17 +73,9 @@ public class RentalService {
 						System.out.println("사용할 비밀번호를 입력해주세요. >>> \n(회원가입을 취소하고 싶으시면 exit을 입력해주세요.)");
 						pw = sc.nextLine();
 						if (pw.equals("exit")) break Loop1;
-						if (pw.length() < 8){
-							System.out.println("비밀번호는 8글자 이상이어야 합니다.");
-							continue;
-						}
 						System.out.println("비밀번호를 다시 한 번 입력해주세요 >>> \n(회원가입을 취소하고 싶으시면 exit을 입력해주세요.)");
 						pwtemp = sc.nextLine();
 						if (pwtemp.equals("exit")) break Loop1;
-						if (pwtemp.length() < 8){
-							System.out.println("비밀번호는 8글자 이상이어야 합니다.");
-							continue;
-						}
 						if (!pw.equals(pwtemp)){
 							System.out.print("처음 입력한 비밀번호와 다릅니다. 다시 ");
 						} else {
@@ -142,7 +131,7 @@ public class RentalService {
 			}
 			while(login){
 				if (isAdmin){
-					Loop9 : while (isAdmin){
+					Loop9 : while (login){
 						System.out.println("------------------------------------------------------------------------------------------------------");
 						System.out.println("차량 목록 보기(1)  |  차량 등록하기(2)  |  차량 삭제하기(3)  |  고객 목록 보기 (4)  |  비밀번호 변경하기(5)  |  로그아웃(6)");
 						System.out.println("------------------------------------------------------------------------------------------------------");
@@ -157,35 +146,35 @@ public class RentalService {
 							break;
 						case 2:
 							System.out.println("차종을 선택해주세요.\n1: 경차\t2: 승용차\t3: SUV");
-							String model = sc.nextLine();
+							int model =  0;
+							try {
+								model = Integer.parseInt(sc.nextLine());
+							} catch (NumberFormatException e){
+								System.out.println("차종 입력이 잘못되었습니다.");
+								break;
+							}
 							System.out.println("차량 번호를 입력해주세요.");
 							String nb = sc.nextLine();
 							Car car = null;
 							switch(model){
-							case "1":
+							case 1:
 								car = new CompactCar(nb);
 								break;
-							case "2":
+							case 2:
 								car = new PassengerCar(nb);
 								break;
-							case "3":
+							case 3:
 								car = new SUVCar(nb);
 								break;
 							default:
-								System.out.println("차종은 1부터 6까지의 숫자로 입력해주세요.");
+								System.out.println("오류가 발생했습니다.");
+								break Loop9;
 							}
 							rs.registerCar(car);
+							MemberService.mb.add(new Member(id, pw, age));
+							System.out.println("차량 번호 [" + nb + "] 정상적으로 등록되었습니다.");
 							break;
 						case 3:
-							cm.showList();
-							System.out.println("\n목록에서 삭제할 차량 번호를 입력해주세요.");
-							int numPlate = Integer.parseInt(sc.nextLine());
-							System.out.println("차량 "+rs.deleteCar(numPlate) + " 가 삭제되었습니다. ");
-							
-	
-							
-							
-							break;
 						case 4:
 							admin.showMember();
 							break;
@@ -196,6 +185,7 @@ public class RentalService {
 						case 6:
 							isAdmin = false;
 							login = false;
+							ms.logout("admin");
 							break;
 						default:
 							System.out.println("명령은 1부터 3까지의 숫자로 입력해주세요.");
@@ -203,10 +193,10 @@ public class RentalService {
 					}
 					break;
 				} else {
-					Loop0: while(isAdmin){
-						System.out.println("--------------------------------");
+					Loop0: while(login){
+						System.out.println("-----------------------------------------------------------------------------------");
 						System.out.println("차량 목록 보기(1)  |  차량 렌탈하기(2)  |  차량 반납하기 (3)  | 비밀번호 변경하기(4)  |  로그아웃(5)");
-						System.out.println("--------------------------------");
+						System.out.println("-----------------------------------------------------------------------------------");
 						int service2 = 0;
 						try {
 							service2 = Integer.parseInt(sc.nextLine());
@@ -239,24 +229,21 @@ public class RentalService {
 							break;
 						case 3:
 						case 4:
-							admin.showMember();
+							System.out.println("변경할 비밀번호를 입력해주세요.");
+							System.out.println(ms.changePW(loginedID, sc.nextLine()));
 							break;
 						case 5:
-							System.out.println("변경할 비밀번호를 입력해주세요.");
-							admin.changePW("admin", sc.nextLine());
-							break;
-						case 6:
-							isAdmin = false;
 							login = false;
+							ms.logout(loginedID);
 							break;
 						default:
-							System.out.println("명령은 1부터 3까지의 숫자로 입력해주세요.");
+							System.out.println("명령은 1부터 5까지의 숫자로 입력해주세요.");
 						}
 					}
 					break;
 				}
 			}
-			
 		}
+		sc.close();
 	}
 }

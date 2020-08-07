@@ -25,7 +25,7 @@ public class MemberService {
 		return false;
 	}
 
-	public String logout(String id) {
+	public void logout(String id) {
 		for (Member m : mb){
 			if (m != null){ // null check
 				if (m.getId().equals(id) && m.isLogin()){
@@ -33,7 +33,19 @@ public class MemberService {
 				}
 			}
 		}
-		return id + "님, 로그아웃되었습니다.";
+		if (id.equals("admin")) id = "관리자 계정에서 ";
+		System.out.println(id + " 님, 정상적으로 로그아웃되었습니다.");
+	}
+	
+	public String changePW(String id, String pw){
+		for (Member m : mb){
+			if (m != null){ // null check
+				if (m.getId().equals(id)){
+					m.setPw(pw);
+				}
+			}
+		}
+		return "비밀번호가 변경되었습니다.";
 	}
 
 	public void listMember(String id) {
