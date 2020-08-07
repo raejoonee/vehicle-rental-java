@@ -11,7 +11,7 @@ public class Admin extends Member {
 	}
 	
 	public void registerCar(Car car) {
-		CarManager.cm.add(car);   
+		CarManager.cm.add(car);
 	}
 	
 	public void showMember() {

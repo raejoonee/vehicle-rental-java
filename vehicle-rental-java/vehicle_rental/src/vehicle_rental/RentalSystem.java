@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class RentalSystem {
-
+  
 	static final String carListPath = "carList.csv";
 	public SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -49,5 +49,4 @@ public class RentalSystem {
 		if(instance == null) instance = new RentalSystem();
 		return instance;
 	}
-
 }
