@@ -1,5 +1,7 @@
 package vehicle_rental;
 
+import java.util.Iterator;
+
 public class Member {
 	protected String id;
 	protected String pw;
@@ -49,6 +51,12 @@ public class Member {
 	@Override
 	public String toString() {
 		return " [id=" + id + ", age=" + age + ", login=" + login + "]";
+	}
+	
+	public void changePW(String id, String pw) {
+		this.pw = pw;
+		System.out.println("비밀번호가 변경되었습니다.");
+		return;
 	}
 	
 	

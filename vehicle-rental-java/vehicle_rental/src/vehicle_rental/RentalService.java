@@ -10,11 +10,13 @@ public class RentalService {
 		RentalSystem rs = RentalSystem.getInstance();
 		
 		Scanner sc = new Scanner(System.in);
+		// Scanner 닫기 
 		
 		int age = 0;
 		String id = null;
 		String pw = null;
 		String pwtemp = null;
+		String loginedID = null;
 		boolean login = false;
 		boolean isAdmin = false;
 		boolean test = true;
@@ -24,6 +26,8 @@ public class RentalService {
 
 		System.out.println("--------------------------------");
 		System.out.println("자동차 렌탈 서비스에 오신 것을 환영합니다.");
+		
+		
 		
 		while(test){
 			Loop1 : while (!login){
@@ -95,12 +99,14 @@ public class RentalService {
 				case 2:
 					System.out.println("아이디를 입력해주세요. >>> ");
 					id = sc.nextLine();
+					
 					System.out.println("비밀번호를 입력해주세요. >>> ");
 					pw = sc.nextLine();
 					if (ms.login(id, pw)) {
 						if (id.equals("admin")) isAdmin = true;
 						System.out.println("로그인 성공");
 						login = true;
+						loginedID = id;
 					}
 					else System.out.println("아이디 또는 비밀번호가 잘못되었습니다.");
 					break;
@@ -137,8 +143,69 @@ public class RentalService {
 			while(login){
 				if (isAdmin){
 					Loop9 : while (isAdmin){
-						System.out.println("--------------------------------");
+						System.out.println("------------------------------------------------------------------------------------------------------");
 						System.out.println("차량 목록 보기(1)  |  차량 등록하기(2)  |  차량 삭제하기(3)  |  고객 목록 보기 (4)  |  비밀번호 변경하기(5)  |  로그아웃(6)");
+						System.out.println("------------------------------------------------------------------------------------------------------");
+						int service2 = 0;
+						try {
+							service2 = Integer.parseInt(sc.nextLine());
+						} catch (NumberFormatException e){
+						}
+						switch(service2){
+						case 1:
+							cm.showList();
+							break;
+						case 2:
+							System.out.println("차종을 선택해주세요.\n1: 경차\t2: 승용차\t3: SUV");
+							String model = sc.nextLine();
+							System.out.println("차량 번호를 입력해주세요.");
+							String nb = sc.nextLine();
+							Car car = null;
+							switch(model){
+							case "1":
+								car = new CompactCar(nb);
+								break;
+							case "2":
+								car = new PassengerCar(nb);
+								break;
+							case "3":
+								car = new SUVCar(nb);
+								break;
+							default:
+								System.out.println("차종은 1부터 6까지의 숫자로 입력해주세요.");
+							}
+							rs.registerCar(car);
+							break;
+						case 3:
+							cm.showList();
+							System.out.println("\n목록에서 삭제할 차량 번호를 입력해주세요.");
+							int numPlate = Integer.parseInt(sc.nextLine());
+							System.out.println("차량 "+rs.deleteCar(numPlate) + " 가 삭제되었습니다. ");
+							
+	
+							
+							
+							break;
+						case 4:
+							admin.showMember();
+							break;
+						case 5:
+							System.out.println("변경할 비밀번호를 입력해주세요.");
+							admin.changePW("admin", sc.nextLine());
+							break;
+						case 6:
+							isAdmin = false;
+							login = false;
+							break;
+						default:
+							System.out.println("명령은 1부터 3까지의 숫자로 입력해주세요.");
+						}
+					}
+					break;
+				} else {
+					Loop0: while(isAdmin){
+						System.out.println("--------------------------------");
+						System.out.println("차량 목록 보기(1)  |  차량 렌탈하기(2)  |  차량 반납하기 (3)  | 비밀번호 변경하기(4)  |  로그아웃(5)");
 						System.out.println("--------------------------------");
 						int service2 = 0;
 						try {
@@ -166,25 +233,26 @@ public class RentalService {
 								car = new SUVCar(nb);
 								break;
 							default:
-								System.out.println("차종은 1부터 3까지의 숫자로 입력해주세요.");
+								System.out.println("차종은 1부터 6까지의 숫자로 입력해주세요.");
 							}
-							admin.registerCar(car);
 							rs.registerCar(car);
+							break;
+						case 3:
+						case 4:
+							admin.showMember();
+							break;
+						case 5:
+							System.out.println("변경할 비밀번호를 입력해주세요.");
+							admin.changePW("admin", sc.nextLine());
+							break;
+						case 6:
+							isAdmin = false;
+							login = false;
+							break;
 						default:
 							System.out.println("명령은 1부터 3까지의 숫자로 입력해주세요.");
 						}
 					}
-					System.out.println("관리자용 화면입니다.");
-					test = false;
-					break;
-				} else {
-					Loop0: while(isAdmin){
-						System.out.println("--------------------------------");
-						System.out.println("차량 목록 보기(1)  |  차량 렌탈하기(2)  |  차량 반납하기 (3)  | 비밀번호 변경하기(3)  |  로그아웃(4)");
-						System.out.println("--------------------------------");
-					}
-//					System.out.println("고객용 화면입니다.");
-					test = false;
 					break;
 				}
 			}

@@ -1,8 +1,6 @@
 package vehicle_rental;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -45,8 +43,35 @@ public class RentalSystem {
 	    }
 	}
 	
+	public String deleteCar(int position) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(carListPath))));
+		String dummy = "";
+		String line = "";
+		for(int i = 0 ; i < position; i++) {
+			line = br.readLine();
+			dummy += (line +"\r\n");
+		}
+		
+		String delData = br.readLine();
+		//Log.d("mstag","삭제되는 데이터 = "+delData);
+		
+		while((line = br.readLine())!=null) {
+			dummy += (line +"\r\n");
+		}
+		FileWriter fw = new FileWriter(carListPath);
+
+		fw.write(dummy);
+		fw.flush();
+		fw.close();
+		br.close();
+		return delData;
+	}
+	
+
 	public static RentalSystem getInstance() {
 		if(instance == null) instance = new RentalSystem();
 		return instance;
 	}
+	
+	
 }

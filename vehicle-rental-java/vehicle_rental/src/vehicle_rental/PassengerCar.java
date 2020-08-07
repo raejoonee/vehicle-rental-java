@@ -16,7 +16,5 @@ public class PassengerCar extends Car{
 		return "PassengerCar: [numberPlate=" + numberPlate + ", initialFee=" + initialFee + ", additionalFee="
 				+ additionalFee + ", discountRatio=" + discountRatio + "]";
 	}
-	
-	
 
 }
