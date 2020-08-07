@@ -29,19 +29,25 @@ public class RentalSystem {
 	public void registerCar(Car car) throws IOException {
 		String now = sdf.format(new Date());
 		try {
-	        FileWriter fw = new FileWriter(new File(carListPath), true);
+	        FileWriter fw = new FileWriter(carListPath, true);
+	       
 	        if (car instanceof SUVCar){
-	        	fw.write("SUV, " + car.numberPlate + ", " + now + ", FALSE");
+	        	System.out.println("asdjflksadjf");
+	        	fw.write("\nSUV, " + car.numberPlate + ", " + now + ", false");
+	        	CarManager.cm.add(car);
 	        } else if (car instanceof CompactCar){
-	        	fw.write("compactCar, " + car.numberPlate + ", " + now + ", FALSE");
+	        	System.out.println("asdklfjksladfj");
+	        	fw.write("\ncompactCar, " + car.numberPlate + ", " + now + ", false");
+	        	CarManager.cm.add(car);
 	        } else {
-	        	fw.write("passengerCar, " + car.numberPlate + ", " + now + ", FALSE");
+	        	fw.write("\npassengerCar, " + car.numberPlate + ", " + now + ", false");
+	        	CarManager.cm.add(car);
 	        }
+	        fw.flush();
 	        fw.close();
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }
-	}
 	
 	public String deleteCar(int position) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(carListPath))));
