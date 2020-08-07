@@ -1,10 +1,13 @@
 package vehicle_rental;
 
+import java.util.Date;
+
 public class Car {
 	protected String numberPlate;
 	protected int initialFee; // 처음 대여 가격 
 	protected int additionalFee; // 1분마다 붙는 가격 
 	protected double discountRatio;
+	protected Date registeredDate;
 	
 	public Car() {
 		

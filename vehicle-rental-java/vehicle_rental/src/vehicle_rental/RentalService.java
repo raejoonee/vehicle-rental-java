@@ -1,10 +1,14 @@
 package vehicle_rental;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class RentalService {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		MemberService ms = new MemberService();
+		CarManager cm = CarManager.getInstance();
+		RentalSystem rs = RentalSystem.getInstance();
+		
 		Scanner sc = new Scanner(System.in);
 		
 		int age = 0;
@@ -12,10 +16,11 @@ public class RentalService {
 		String pw = null;
 		String pwtemp = null;
 		boolean login = false;
-		boolean admin = false;
+		boolean isAdmin = false;
 		boolean test = true;
 		
-		MemberService.mb.add(new Admin("admin", "admin", 0));
+		Admin admin = new Admin("admin", "admin", 0);
+		MemberService.mb.add(admin);
 
 		System.out.println("--------------------------------");
 		System.out.println("자동차 렌탈 서비스에 오신 것을 환영합니다.");
@@ -64,12 +69,20 @@ public class RentalService {
 					}
 					flag = true;
 					while (flag){
-						System.out.println("사용할 비밀번호를 입력해주세요 >>> \n(회원가입 취소는 exit을 입력해주세요.)");
+						System.out.println("사용할 비밀번호를 입력해주세요. >>> \n(회원가입을 취소하고 싶으시면 exit을 입력해주세요.)");
 						pw = sc.nextLine();
 						if (pw.equals("exit")) break Loop1;
-						System.out.println("비밀번호를 다시 한 번 입력해주세요 >>> \n(회원가입 취소는 exit을 입력해주세요.)");
+						if (pw.length() < 8){
+							System.out.println("비밀번호는 8글자 이상이어야 합니다.");
+							continue;
+						}
+						System.out.println("비밀번호를 다시 한 번 입력해주세요 >>> \n(회원가입을 취소하고 싶으시면 exit을 입력해주세요.)");
 						pwtemp = sc.nextLine();
 						if (pwtemp.equals("exit")) break Loop1;
+						if (pwtemp.length() < 8){
+							System.out.println("비밀번호는 8글자 이상이어야 합니다.");
+							continue;
+						}
 						if (!pw.equals(pwtemp)){
 							System.out.print("처음 입력한 비밀번호와 다릅니다. 다시 ");
 						} else {
@@ -85,7 +98,7 @@ public class RentalService {
 					System.out.println("비밀번호를 입력해주세요. >>> ");
 					pw = sc.nextLine();
 					if (ms.login(id, pw)) {
-						if (id.equals("admin")) admin = true;
+						if (id.equals("admin")) isAdmin = true;
 						System.out.println("로그인 성공");
 						login = true;
 					}
@@ -122,19 +135,52 @@ public class RentalService {
 				}
 			}
 			while(login){
-				if (admin){
-					Loop9 : while (admin){
+				if (isAdmin){
+					Loop9 : while (isAdmin){
 						System.out.println("--------------------------------");
 						System.out.println("차량 목록 보기(1)  |  차량 등록하기(2)  |  차량 삭제하기(3)  |  고객 목록 보기 (4)  |  비밀번호 변경하기(5)  |  로그아웃(6)");
 						System.out.println("--------------------------------");
+						int service2 = 0;
+						try {
+							service2 = Integer.parseInt(sc.nextLine());
+						} catch (NumberFormatException e){
+						}
+						switch(service2){
+						case 1:
+							cm.showList();
+							break;
+						case 2:
+							System.out.println("차종을 선택해주세요.\n1: 경차\t2: 승용차\t3: SUV");
+							String model = sc.nextLine();
+							System.out.println("차량 번호를 입력해주세요.");
+							String nb = sc.nextLine();
+							Car car = null;
+							switch(model){
+							case "1":
+								car = new CompactCar(nb);
+								break;
+							case "2":
+								car = new PassengerCar(nb);
+								break;
+							case "3":
+								car = new SUVCar(nb);
+								break;
+							default:
+								System.out.println("차종은 1부터 3까지의 숫자로 입력해주세요.");
+							}
+							admin.registerCar(car);
+							rs.registerCar(car);
+						default:
+							System.out.println("명령은 1부터 3까지의 숫자로 입력해주세요.");
+						}
 					}
 					System.out.println("관리자용 화면입니다.");
 					test = false;
 					break;
 				} else {
-					Loop0: while(admin){
+					Loop0: while(isAdmin){
 						System.out.println("--------------------------------");
-						System.out.println("차량 목록 보기(1)  |  차량 렌탈하기(2)  | 비밀번호 변경하기(3)  |  로그아웃(4)");
+						System.out.println("차량 목록 보기(1)  |  차량 렌탈하기(2)  |  차량 반납하기 (3)  | 비밀번호 변경하기(3)  |  로그아웃(4)");
 						System.out.println("--------------------------------");
 					}
 //					System.out.println("고객용 화면입니다.");

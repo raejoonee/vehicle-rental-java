@@ -1,9 +1,8 @@
 package vehicle_rental;
 
-import java.util.Iterator;
-import java.util.regex.Matcher;
+import java.util.*;
 
-public class Admin extends Member {
+public class Admin extends Member {	
 	public Admin(String id, String pw, int age){
 		super();
 		this.id = id;
