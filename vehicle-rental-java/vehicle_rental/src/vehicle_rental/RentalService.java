@@ -175,6 +175,11 @@ public class RentalService {
 							System.out.println("차량 번호 [" + nb + "] 정상적으로 등록되었습니다.");
 							break;
 						case 3:
+							cm.showList();
+							System.out.println("\n목록에서 삭제할 차량 번호를 입력해주세요.");
+							int numPlate = Integer.parseInt(sc.nextLine());
+							System.out.println("차량 "+rs.deleteCar(numPlate) + " 가 삭제되었습니다. ");
+							break;
 						case 4:
 							admin.showMember();
 							break;
