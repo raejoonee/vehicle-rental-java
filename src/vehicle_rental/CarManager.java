@@ -15,7 +15,7 @@ public class CarManager {
 	
 	public void showList() throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(new File(RentalSystem.carListPath)));
-		br.readLine();
+		System.out.println("---- " + br.readLine());
 		String line = "";
 		int i = 1;
 		while (true){

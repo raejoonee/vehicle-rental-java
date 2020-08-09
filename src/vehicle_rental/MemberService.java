@@ -34,7 +34,8 @@ public class MemberService {
 			}
 		}
 		if (id.equals("admin")) id = "관리자 계정에서 ";
-		System.out.println(id + " 님, 정상적으로 로그아웃되었습니다.");
+		else id += " 님, ";
+		System.out.println(id + "정상적으로 로그아웃되었습니다.");
 	}
 	
 	public String changePW(String id, String pw){

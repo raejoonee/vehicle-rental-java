@@ -3,6 +3,8 @@ package vehicle_rental;
 import java.io.*;
 import java.util.Scanner;
 
+import org.omg.Messaging.SyncScopeHelper;
+
 public class RentalService {
 	public static void main(String[] args) throws IOException {
 		MemberService ms = new MemberService();
@@ -21,6 +23,7 @@ public class RentalService {
 		boolean test = true;
 		
 		Admin admin = new Admin("admin", "admin", 0);
+		Customer customer = null;
 		MemberService.mb.add(admin);
 
 		System.out.println("--------------------------------");
@@ -80,6 +83,7 @@ public class RentalService {
 							System.out.print("처음 입력한 비밀번호와 다릅니다. 다시 ");
 						} else {
 							MemberService.mb.add(new Member(id, pw, age));
+							Customer.cl.add(new Customer(id));
 							System.out.println("환영합니다! 가입에 성공했습니다!");
 							break;
 						}
@@ -93,23 +97,15 @@ public class RentalService {
 					pw = sc.nextLine();
 					if (ms.login(id, pw)) {
 						if (id.equals("admin")) isAdmin = true;
+						else {
+							
+						}
 						System.out.println("로그인 성공");
 						login = true;
 						loginedID = id;
 					}
 					else System.out.println("아이디 또는 비밀번호가 잘못되었습니다.");
 					break;
-//				case 3:
-//					System.out.println("id >>> ");
-//					id = sc.nextLine();
-//					System.out.println(ms.logout(id));
-//					break;
-//				case 4:
-//					System.out.println("id >>> ");
-//					ms.listMember(id);
-//					id = sc.nextLine();
-//					ms.listMember(id);
-//					break;
 				case 3:
 					while(true){
 						System.out.println("프로그램을 종료하시겠습니까? (Y/N)");
@@ -171,7 +167,6 @@ public class RentalService {
 								break Loop9;
 							}
 							rs.registerCar(car);
-							MemberService.mb.add(new Member(id, pw, age));
 							System.out.println("차량 번호 [" + nb + "] 정상적으로 등록되었습니다.");
 							break;
 						case 3:
@@ -193,15 +188,24 @@ public class RentalService {
 							ms.logout("admin");
 							break;
 						default:
-							System.out.println("명령은 1부터 3까지의 숫자로 입력해주세요.");
+							System.out.println("명령은 1부터 6까지의 숫자로 입력해주세요.");
 						}
 					}
 					break;
 				} else {
 					Loop0: while(login){
-						System.out.println("-----------------------------------------------------------------------------------");
-						System.out.println("차량 목록 보기(1)  |  차량 렌탈하기(2)  |  차량 반납하기 (3)  | 비밀번호 변경하기(4)  |  로그아웃(5)");
-						System.out.println("-----------------------------------------------------------------------------------");
+						int loginNo = 0;
+						for (Customer cst : Customer.cl){
+							if (cst != null){
+								if (cst.getId().equals(loginedID)){
+									customer = Customer.cl.get(loginNo);
+								}
+							}
+							loginNo++;
+						}
+						System.out.println("--------------------------------------------------------------------------------------------------");
+						System.out.println("차량 목록 보기(1)  |  차량 렌탈하기(2)  |  차량 반납하기 (3)  |  충전하기(4)  |  비밀번호 변경하기(5)  |  로그아웃(6)");
+						System.out.println("--------------------------------------------------------------------------------------------------");
 						int service2 = 0;
 						try {
 							service2 = Integer.parseInt(sc.nextLine());
@@ -211,38 +215,60 @@ public class RentalService {
 						case 1:
 							cm.showList();
 							break;
-						case 2:
-							System.out.println("차종을 선택해주세요.\n1: 경차\t2: 승용차\t3: SUV");
-							String model = sc.nextLine();
-							System.out.println("차량 번호를 입력해주세요.");
-							String nb = sc.nextLine();
-							Car car = null;
-							switch(model){
-							case "1":
-								car = new CompactCar(nb);
-								break;
-							case "2":
-								car = new PassengerCar(nb);
-								break;
-							case "3":
-								car = new SUVCar(nb);
-								break;
-							default:
-								System.out.println("차종은 1부터 6까지의 숫자로 입력해주세요.");
+						case 2: // 차량 렌탈하기 
+							cm.showList();					
+							System.out.println("\n목록에서 대여 차량 번호를 입력해주세요.");
+							int num = 0;
+							try {
+								num = Integer.parseInt(sc.nextLine());
+							} catch (NumberFormatException e){
+								System.out.println("숫자만 입력 가능합니다.");
 							}
-							rs.registerCar(car);
+							customer.rentCar(num);
 							break;
-						case 3:
+						case 3: // 차량 반납하기 
+							while(true){
+								System.out.println("사용중이신 "+ customer.getIsRenting() + "을(를) 반납하시겠습니까? (Y/N)");
+								String sel = sc.nextLine();
+								// sel을 대문자로 만들고(toUpperCase()), 공백을 제거하고(trim()), "Y"랑 같은지 본다.
+								if (sel.toUpperCase().trim().equals("Y")){
+									customer.returnCar();								
+									break;
+								} else if (sel.toUpperCase().trim().equals("N")){
+									break;
+								} else {
+									System.out.println("Y나 N을 입력해주세요.");
+								}
+							}
+							break;
 						case 4:
+							System.out.println("돈을 얼마나 충전하시겠어요?");
+							System.out.println("현재 잔고: " + customer.getBalance());
+							int service3 = 0;
+							try {
+								service3 = Integer.parseInt(sc.nextLine());
+							} catch (NumberFormatException e){
+								System.out.println("숫자 외의 입력이 감지되어 충전이 종료되었습니다.");
+								break;
+							}
+							if (service3 <= 0){
+								System.out.println("충전은 1원 이상만 가능합니다.");
+								break;
+							}
+							customer.charge(service3);
+							System.out.println("감사합니다. " + service3 + " 원이 충전되었습니다.");
+							System.out.println("현재 잔고: " + customer.getBalance());
+							break;
+						case 5:
 							System.out.println("변경할 비밀번호를 입력해주세요.");
 							System.out.println(ms.changePW(loginedID, sc.nextLine()));
 							break;
-						case 5:
+						case 6:
 							login = false;
 							ms.logout(loginedID);
 							break;
 						default:
-							System.out.println("명령은 1부터 5까지의 숫자로 입력해주세요.");
+							System.out.println("명령은 1부터 6까지의 숫자로 입력해주세요.");
 						}
 					}
 					break;

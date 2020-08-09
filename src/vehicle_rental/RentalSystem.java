@@ -48,6 +48,7 @@ public class RentalSystem {
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }
+	}
 	
 	public String deleteCar(int position) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(carListPath))));
@@ -59,10 +60,9 @@ public class RentalSystem {
 		}
 		
 		String delData = br.readLine();
-		//Log.d("mstag","삭제되는 데이터 = "+delData);
 		
 		while((line = br.readLine())!=null) {
-			dummy += (line +"\r\n");
+			dummy += (line +"\r");
 		}
 		FileWriter fw = new FileWriter(carListPath);
 
