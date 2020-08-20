@@ -21,7 +21,7 @@ public class Admin extends Member {
 	
 	
 	public static void main(String[] args) {
-		MemberService mb = new MemberService();
+		MemberService mb = MemberService.getInstance();
 		mb.regist("id", "pw", 100);
 		mb.regist("asdf", "asdf", 50);
 		Admin admin = new Admin("admin", "admin", 120);

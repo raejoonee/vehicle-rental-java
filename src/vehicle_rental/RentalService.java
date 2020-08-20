@@ -7,20 +7,10 @@ import org.omg.Messaging.SyncScopeHelper;
 
 public class RentalService {
 	public static void main(String[] args) throws IOException {
-		MemberService ms = new MemberService();
+		MemberService ms = MemberService.getInstance();
 		CarManager cm = CarManager.getInstance();
 		RentalSystem rs = RentalSystem.getInstance();
-		
 		Scanner sc = new Scanner(System.in);
-		
-		int age = 0;
-		String id = null;
-		String pw = null;
-		String pwtemp = null;
-		String loginedID = null;
-		boolean login = false;
-		boolean isAdmin = false;
-		boolean test = true;
 		
 		Admin admin = new Admin("admin", "admin", 0);
 		Customer customer = null;
@@ -29,105 +19,11 @@ public class RentalService {
 		System.out.println("--------------------------------");
 		System.out.println("자동차 렌탈 서비스에 오신 것을 환영합니다.");
 		
-		while(test){
-			Loop1 : while (!login){
-				System.out.println("--------------------------------");
-				System.out.println("회원가입(1)  |  로그인(2)  |  종료(3)");
-				System.out.println("--------------------------------");
-				
-				int service = 0;
-				try {
-					service = Integer.parseInt(sc.nextLine());
-				} catch (NumberFormatException e){
-				}
-				switch(service){
-				case 1:
-					while(true){
-						System.out.println("만 나이를 입력해주세요. >>> ");
-						try {
-							age = Integer.parseInt(sc.nextLine());
-							break;
-						} catch (NumberFormatException e){
-							System.out.println("나이는 숫자로 입력하셔야 합니다.");
-						}
-					}
-					if (age <= 19){
-						System.out.println("죄송합니다. 만 19세 이하 미성년자는 가입할 수 없습니다.");
-						break;
-					}
-					System.out.print("환영합니다! ");
-					boolean flag = true;
-					Loop2: while (flag){
-						System.out.println("사용하고자 하는 아이디를 입력해주세요 >>> \n(회원가입 취소는 exit을 입력해주세요.)");
-						id = sc.nextLine();
-						if (id.equals("exit")) break Loop1;
-						for (Member m : MemberService.mb){
-							if (m != null){ // null check
-								if (m.getId().equals(id)){
-									System.out.println("죄송합니다. 이미 다른 사람이 사용중인 ID입니다.");
-									break Loop2;
-								}
-							}
-						}
-						flag = false;
-					}
-					flag = true;
-					while (flag){
-						System.out.println("사용할 비밀번호를 입력해주세요. >>> \n(회원가입을 취소하고 싶으시면 exit을 입력해주세요.)");
-						pw = sc.nextLine();
-						if (pw.equals("exit")) break Loop1;
-						System.out.println("비밀번호를 다시 한 번 입력해주세요 >>> \n(회원가입을 취소하고 싶으시면 exit을 입력해주세요.)");
-						pwtemp = sc.nextLine();
-						if (pwtemp.equals("exit")) break Loop1;
-						if (!pw.equals(pwtemp)){
-							System.out.print("처음 입력한 비밀번호와 다릅니다. 다시 ");
-						} else {
-							MemberService.mb.add(new Member(id, pw, age));
-							Customer.cl.add(new Customer(id));
-							System.out.println("환영합니다! 가입에 성공했습니다!");
-							break;
-						}
-					}
-					break;
-				case 2:
-					System.out.println("아이디를 입력해주세요. >>> ");
-					id = sc.nextLine();
-					
-					System.out.println("비밀번호를 입력해주세요. >>> ");
-					pw = sc.nextLine();
-					if (ms.login(id, pw)) {
-						if (id.equals("admin")) isAdmin = true;
-						else {
-							
-						}
-						System.out.println("로그인 성공");
-						login = true;
-						loginedID = id;
-					}
-					else System.out.println("아이디 또는 비밀번호가 잘못되었습니다.");
-					break;
-				case 3:
-					while(true){
-						System.out.println("프로그램을 종료하시겠습니까? (Y/N)");
-						String sel = sc.nextLine();
-						// sel을 대문자로 만들고(toUpperCase()), 공백을 제거하고(trim()), "Y"랑 같은지 본다.
-						if (sel.toUpperCase().trim().equals("Y")){
-							System.out.println("안녕히 가세요.");
-							return ;
-						} else if (sel.toUpperCase().trim().equals("N")){
-							break;
-						} else {
-							System.out.println("Y나 N을 입력해주세요.");
-						}
-					}
-					break;
-				default:
-					System.out.println("명령은 1부터 3까지의 숫자로 입력해주세요.");
-				}
-			}
-			while(login){
-				if (isAdmin){
-					Loop9 : while (login){
+		while(MemberService.run){
+			MemberService.run();
+			while(MemberService.login){
+				if (MemberService.isAdmin){
+					Loop9 : while (MemberService.login){
 						System.out.println("------------------------------------------------------------------------------------------------------");
 						System.out.println("차량 목록 보기(1)  |  차량 등록하기(2)  |  차량 삭제하기(3)  |  고객 목록 보기 (4)  |  비밀번호 변경하기(5)  |  로그아웃(6)");
 						System.out.println("------------------------------------------------------------------------------------------------------");
@@ -183,8 +79,8 @@ public class RentalService {
 							admin.changePW("admin", sc.nextLine());
 							break;
 						case 6:
-							isAdmin = false;
-							login = false;
+							MemberService.isAdmin = false;
+							MemberService.login = false;
 							ms.logout("admin");
 							break;
 						default:
@@ -193,11 +89,11 @@ public class RentalService {
 					}
 					break;
 				} else {
-					Loop0: while(login){
+					while(MemberService.login){
 						int loginNo = 0;
 						for (Customer cst : Customer.cl){
 							if (cst != null){
-								if (cst.getId().equals(loginedID)){
+								if (cst.getId().equals(MemberService.loginedID)){
 									customer = Customer.cl.get(loginNo);
 								}
 							}
@@ -215,7 +111,7 @@ public class RentalService {
 						case 1:
 							cm.showList();
 							break;
-						case 2: // 차량 렌탈하기 
+						case 2: 
 							cm.showList();					
 							System.out.println("\n목록에서 대여 차량 번호를 입력해주세요.");
 							int num = 0;
@@ -226,11 +122,10 @@ public class RentalService {
 							}
 							customer.rentCar(num);
 							break;
-						case 3: // 차량 반납하기 
+						case 3: 
 							while(true){
 								System.out.println("사용중이신 "+ customer.getIsRenting() + "을(를) 반납하시겠습니까? (Y/N)");
 								String sel = sc.nextLine();
-								// sel을 대문자로 만들고(toUpperCase()), 공백을 제거하고(trim()), "Y"랑 같은지 본다.
 								if (sel.toUpperCase().trim().equals("Y")){
 									customer.returnCar();								
 									break;
@@ -261,11 +156,11 @@ public class RentalService {
 							break;
 						case 5:
 							System.out.println("변경할 비밀번호를 입력해주세요.");
-							System.out.println(ms.changePW(loginedID, sc.nextLine()));
+							System.out.println(ms.changePW(MemberService.loginedID, sc.nextLine()));
 							break;
 						case 6:
-							login = false;
-							ms.logout(loginedID);
+							MemberService.login = false;
+							ms.logout(MemberService.loginedID);
 							break;
 						default:
 							System.out.println("명령은 1부터 6까지의 숫자로 입력해주세요.");
